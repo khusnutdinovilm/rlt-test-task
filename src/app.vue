@@ -1,13 +1,16 @@
 <template>
   <main class="container main">
-    <div class="main__sidebar"></div>
+    <app-sidebar class="main__sidebar" />
+
     <div class="main__content"></div>
+
     <app-footer class="main__footer" />
   </main>
 </template>
 
 <script setup lang="ts">
 import AppFooter from "app/footer.vue";
+import AppSidebar from "app/sidebar.vue";
 </script>
 
 <style lang="scss">
