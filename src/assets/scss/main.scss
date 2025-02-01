@@ -1,0 +1,18 @@
+@import "./reset";
+@import "./fonts";
+
+body {
+  font-family: $primary-font-family, sans-serif;
+  background-color: $darkest;
+}
+
+#app {
+  min-height: 100dvh;
+  @include flex-center;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 785px;
+  width: 100%;
+}
