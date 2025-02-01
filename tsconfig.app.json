@@ -12,7 +12,8 @@
       "components/*": ["./src/components/*"],
       "app/*": ["./src/components/app/*"],
       "ui/*": ["./src/components/ui/*"],
-      "icons/*": ["./src/components/icons/*"]
+      "icons/*": ["./src/components/icons/*"],
+      "modules/*": ["./src/modules/*"]
     }
   }
 }

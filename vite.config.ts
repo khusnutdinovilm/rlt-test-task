@@ -24,6 +24,7 @@ export default defineConfig({
       "app": fileURLToPath(new URL("./src/components/app", import.meta.url)),
       "ui": fileURLToPath(new URL("./src/components/ui", import.meta.url)),
       "icons": fileURLToPath(new URL("./src/components/icons", import.meta.url)),
+      "modules": fileURLToPath(new URL("./src/modules", import.meta.url)),
     },
   },
 
