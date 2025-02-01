@@ -10,6 +10,7 @@
       "scss/*": ["./src/assets/scss/*"],
       "store/*": ["./src/store/*"],
       "components/*": ["./src/components/*"],
+      "app/*": ["./src/components/app/*"],
       "ui/*": ["./src/components/ui/*"],
       "icons/*": ["./src/components/icons/*"]
     }

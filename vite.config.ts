@@ -21,6 +21,7 @@ export default defineConfig({
       "scss": fileURLToPath(new URL("./src/assets/scss", import.meta.url)),
       "store": fileURLToPath(new URL("./src/store", import.meta.url)),
       "components": fileURLToPath(new URL("./src/components", import.meta.url)),
+      "app": fileURLToPath(new URL("./src/components/app", import.meta.url)),
       "ui": fileURLToPath(new URL("./src/components/ui", import.meta.url)),
       "icons": fileURLToPath(new URL("./src/components/icons", import.meta.url)),
     },
