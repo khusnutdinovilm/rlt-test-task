@@ -6,7 +6,7 @@
         :key="pos"
         class="inventory__grid-item"
         :draggable="!!getInventoryItem(pos)"
-        @click.prevent="showDetailItem(pos)"
+        @click.prevent="onClickGridElement(pos)"
         @dragstart="onDragStart($event, pos)"
         @dragover.prevent
         @dragenter.prevent
@@ -16,15 +16,20 @@
       </div>
     </div>
 
-    <div
+    <inventory-details
+      v-if="activeInventoryItem"
+      :inventory-item="activeInventoryItem"
       class="inventory__item-details"
-      :style="{
-        right: isShowDetail ? '0' : '-100%',
-      }"
-      @click.prevent="isShowDetail = false"
-    >
-      {{ activeItem }}
-    </div>
+      :style="{ right: isShowInventoryItemDetails ? '0px' : '-100%' }"
+      @close-details="closeInventorItemDetails"
+      @delete-some-count="deleteSomeCount"
+    />
+
+    <div
+      v-if="isShowInventoryItemDetails"
+      class="inventory__bg"
+      @click.prevent="closeInventorItemDetails"
+    ></div>
   </div>
 </template>
 
@@ -32,7 +37,9 @@
 import { onMounted, ref } from "vue";
 import { useInventoryStore } from "./store";
 
+import InventoryDetails from "./details.vue";
 import InventoryItem from "./item.vue";
+import type { IInventoryItem } from "./types";
 
 defineOptions({
   name: "inventory-grid",
@@ -40,15 +47,42 @@ defineOptions({
 
 const INVENTORY_CAPACITY = 25;
 
-const { getInventoryItem, fetchInventoryItem, createInventoryItem, replaceInventoryItems } =
-  useInventoryStore();
+const {
+  getInventoryItem,
+  fetchInventoryItem,
+  createInventoryItem,
+  replaceInventoryItems,
+  updateInventoryItem,
+  deleteInventoryItem,
+} = useInventoryStore();
 
-const isShowDetail = ref(false);
-const activeItem = ref<number>();
-const showDetailItem = (pos: number) => {
-  const target = getInventoryItem(pos);
-  if (!target) {
+const onClickGridElement = (pos: number) => {
+  const targetElement = getInventoryItem(pos);
+
+  if (!targetElement) {
     createInventoryItem(pos);
+  } else {
+    showInventorItemDetails(targetElement);
+  }
+};
+
+const isShowInventoryItemDetails = ref(false);
+const activeInventoryItem = ref<IInventoryItem>();
+const showInventorItemDetails = (inventoryItem: IInventoryItem) => {
+  activeInventoryItem.value = inventoryItem as IInventoryItem;
+  isShowInventoryItemDetails.value = true;
+};
+const closeInventorItemDetails = () => (isShowInventoryItemDetails.value = false);
+
+const deleteSomeCount = (deletedCount: number) => {
+  const pos = activeInventoryItem.value?.pos as number;
+  const count = activeInventoryItem.value?.count as number;
+
+  if (deletedCount === count) {
+    deleteInventoryItem(pos);
+  } else {
+    const remainingCount = count - deletedCount;
+    updateInventoryItem(pos, { count: remainingCount });
   }
 };
 
@@ -108,14 +142,21 @@ onMounted(async () => {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: -100%;
-    width: 250px;
-    @include flex-center;
+    z-index: 1;
 
     background-color: #26262680;
     backdrop-filter: blur(12px);
 
-    transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-out;
+  }
+
+  &__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    // background-color: black;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>
