@@ -19,9 +19,9 @@ export const useInventoryStore = defineStore("inventory-store", () => {
     }
   };
 
-  const createInventoryItem = async (pos: number): Promise<void> => {
+  const createInventoryItem = async (pos: number, count: number): Promise<void> => {
     try {
-      const newInventoryItem = await inventoryService.create(pos);
+      const newInventoryItem = await inventoryService.create(pos, count);
       mapInventoryList.value.set(pos, newInventoryItem);
     } catch (error) {
       console.error(error);

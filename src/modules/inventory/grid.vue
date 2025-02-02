@@ -26,6 +26,21 @@
       />
     </transition>
 
+    <base-modal v-model="isShowCreateInventoryItemModal" modal-title="Создание товара">
+      <template #base-modal-content>
+        <base-input
+          v-model="createInventoryCount"
+          type="number"
+          placeholder="Введите кол-во товара"
+        />
+      </template>
+
+      <template #base-modal-btns>
+        <base-button label-text="Отмена" @click.prevent="isShowCreateInventoryItemModal = false" />
+        <base-button label-text="Подтвердить" type="danger" @click.prevent="createInventoryIte" />
+      </template>
+    </base-modal>
+
     <div
       v-if="isShowInventoryItemDetails"
       class="inventory__bg"
@@ -38,6 +53,10 @@
 import { onMounted, ref } from "vue";
 import { useInventoryStore } from "./store";
 
+import BaseButton from "ui/base-button";
+import BaseInput from "ui/base-input";
+import BaseModal from "ui/base-modal";
+
 import InventoryDetails from "./details.vue";
 import InventoryItem from "./item.vue";
 import type { IInventoryItem } from "./types";
@@ -47,6 +66,23 @@ defineOptions({
 });
 
 const INVENTORY_CAPACITY = 25;
+
+const isShowCreateInventoryItemModal = ref(false);
+const createInventoryCount = ref<number>(1);
+const creatingInventoryItemPos = ref<number>();
+const showCreateInventoryItemModal = (pos: number) => {
+  creatingInventoryItemPos.value = pos;
+  isShowCreateInventoryItemModal.value = true;
+};
+
+const createInventoryIte = () => {
+  if (!creatingInventoryItemPos.value) return;
+
+  createInventoryItem(creatingInventoryItemPos.value, createInventoryCount.value);
+
+  isShowCreateInventoryItemModal.value = false;
+  createInventoryCount.value = 1;
+};
 
 const {
   getInventoryItem,
@@ -61,7 +97,7 @@ const onClickGridElement = (pos: number) => {
   const targetElement = getInventoryItem(pos);
 
   if (!targetElement) {
-    createInventoryItem(pos);
+    showCreateInventoryItemModal(pos);
   } else {
     showInventorItemDetails(targetElement);
   }

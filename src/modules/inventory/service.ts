@@ -70,13 +70,13 @@ class InventoryService {
     }
   }
 
-  async create(pos: number): Promise<IInventoryItem> {
+  async create(pos: number, count: number): Promise<IInventoryItem> {
     const color = this._getRandomColor();
 
     const newInventoryItem: IInventoryItem = {
       pos,
       color,
-      count: 1,
+      count,
     };
 
     this._mapInventoryList.set(pos, newInventoryItem);
