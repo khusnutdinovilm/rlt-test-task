@@ -30,7 +30,7 @@ export const useInventoryStore = defineStore("inventory-store", () => {
 
   const replaceInventoryItems = async (initPos: number, targetPos: number): Promise<void> => {
     try {
-      const data = await inventoryService.replace(initPos + 1, targetPos);
+      const data = await inventoryService.replace(initPos, targetPos);
 
       data.map(item => mapInventoryList.value.set(item.pos, item));
 
