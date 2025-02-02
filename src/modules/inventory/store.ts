@@ -19,10 +19,24 @@ export const useInventoryStore = defineStore("inventory-store", () => {
     }
   };
 
-  const addInventoryItem = async (pos: number): Promise<void> => {
+  const createInventoryItem = async (pos: number): Promise<void> => {
     try {
-      const newInventoryItem = await inventoryService.add(pos);
+      const newInventoryItem = await inventoryService.create(pos);
       mapInventoryList.value.set(pos, newInventoryItem);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const replaceInventoryItems = async (initPos: number, targetPos: number): Promise<void> => {
+    try {
+      const data = await inventoryService.replace(initPos + 1, targetPos);
+
+      data.map(item => mapInventoryList.value.set(item.pos, item));
+
+      if (data.length < 2) {
+        mapInventoryList.value.delete(initPos);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -57,7 +71,8 @@ export const useInventoryStore = defineStore("inventory-store", () => {
     inventoryList,
     getInventoryItem,
     fetchInventoryItem,
-    addInventoryItem,
+    createInventoryItem,
+    replaceInventoryItems,
     updateInventoryItem,
     deleteInventoryItem,
   };

@@ -2,12 +2,17 @@
   <div class="inventory">
     <div class="inventory__grid">
       <div
-        v-for="item in INVENTORY_CAPACITY"
-        :key="item"
+        v-for="pos in INVENTORY_CAPACITY"
+        :key="pos"
         class="inventory__grid-item"
-        @click.prevent="showDetailItem(item)"
+        :draggable="!!getInventoryItem(pos)"
+        @click.prevent="showDetailItem(pos)"
+        @dragstart="onDragStart($event, pos)"
+        @dragover.prevent
+        @dragenter.prevent
+        @drop="onDrop($event, pos)"
       >
-        {{ item }}
+        <inventory-item :inventory-item="getInventoryItem(pos)" class="inventory__item" />
       </div>
     </div>
 
@@ -24,7 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useInventoryStore } from "./store";
+
+import InventoryItem from "./item.vue";
 
 defineOptions({
   name: "inventory-grid",
@@ -32,12 +40,37 @@ defineOptions({
 
 const INVENTORY_CAPACITY = 25;
 
+const { getInventoryItem, fetchInventoryItem, createInventoryItem, replaceInventoryItems } =
+  useInventoryStore();
+
 const isShowDetail = ref(false);
 const activeItem = ref<number>();
-const showDetailItem = (item: number) => {
-  activeItem.value = item;
-  isShowDetail.value = true;
+const showDetailItem = (pos: number) => {
+  const target = getInventoryItem(pos);
+  if (!target) {
+    createInventoryItem(pos);
+  }
 };
+
+const onDragStart = (event: DragEvent, pos: number) => {
+  if (!event.dataTransfer) return;
+
+  event.dataTransfer.dropEffect = "move";
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("init-pos", String(pos));
+};
+
+const onDrop = (event: DragEvent, targetPos: number) => {
+  if (!event.dataTransfer) return;
+
+  const initPos = Number(event.dataTransfer.getData("init-pos"));
+
+  replaceInventoryItems(initPos, targetPos);
+};
+
+onMounted(async () => {
+  await fetchInventoryItem();
+});
 </script>
 
 <style lang="scss">
@@ -55,9 +88,20 @@ const showDetailItem = (item: number) => {
     gap: 1px;
 
     &-item {
-      background-color: $dark;
       @include flex-center;
+
+      background-color: $dark;
+
+      &:hover {
+        background-color: #2f2f2f;
+        cursor: pointer;
+      }
     }
+  }
+
+  &__item {
+    width: 100%;
+    height: 100%;
   }
 
   &__item-details {

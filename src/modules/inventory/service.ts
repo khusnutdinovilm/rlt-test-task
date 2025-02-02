@@ -42,7 +42,7 @@ class InventoryService {
     }
   }
 
-  async add(pos: number): Promise<IInventoryItem> {
+  async create(pos: number): Promise<IInventoryItem> {
     const color = this._getRandomColor();
 
     const newInventoryItem: IInventoryItem = {
@@ -56,6 +56,47 @@ class InventoryService {
     this._saveInventoryList();
 
     return newInventoryItem;
+  }
+
+  async replace(initPos: number, targetPos: number): Promise<IInventoryItem[]> {
+    let data: IInventoryItem[] = [];
+
+    const targetInventoryItem = this._mapInventoryList.get(targetPos);
+    const initInventoryItem = this._mapInventoryList.get(initPos);
+
+    if (!initInventoryItem) {
+      throw new Error("Нет перетаскиваемого элемента");
+    }
+
+    if (targetInventoryItem) {
+      const newInitInventoryItem = {
+        ...targetInventoryItem,
+        pos: initPos,
+      };
+      const newTargetInventoryItem = {
+        ...initInventoryItem,
+        pos: targetPos,
+      };
+
+      this._mapInventoryList.set(initPos, newInitInventoryItem);
+      this._mapInventoryList.set(targetPos, newTargetInventoryItem);
+
+      data = [newInitInventoryItem, newTargetInventoryItem];
+    } else {
+      const newInventoryItem = {
+        ...initInventoryItem,
+        pos: targetPos,
+      };
+
+      this._mapInventoryList.delete(initPos);
+      this._mapInventoryList.set(targetPos, newInventoryItem);
+
+      data = [newInventoryItem];
+    }
+
+    this._saveInventoryList();
+
+    return data;
   }
 
   async patch(
