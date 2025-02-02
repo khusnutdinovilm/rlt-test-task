@@ -114,22 +114,19 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.inventory-item-details {
-}
-
 .inventory-item-details-enter-active,
 .inventory-item-details-leave-active {
-  transition: right 0.5s ease;
+  transition: transform 0.5s ease;
 }
 
 .inventory-item-details-enter-from,
 .inventory-item-details-leave-to {
-  right: -100%;
+  transform: translateX(100%);
 }
 
 .inventory-item-details-enter-to,
 .inventory-item-details-leave-from {
-  right: 0;
+  transform: translateX(0);
 }
 
 .inventory {

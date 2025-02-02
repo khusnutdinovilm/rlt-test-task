@@ -13,6 +13,34 @@ const colors: IInventaryColor[] = [
     primary: "#656CAA",
     secondary: "#7481ED59",
   },
+  {
+    primary: "#AA6565",
+    secondary: "#D9989859",
+  },
+  {
+    primary: "#65AA88",
+    secondary: "#98D9BB59",
+  },
+  {
+    primary: "#AA65A0",
+    secondary: "#D998D259",
+  },
+  {
+    primary: "#65A3AA",
+    secondary: "#98D1D959",
+  },
+  {
+    primary: "#AAA165",
+    secondary: "#D9D19859",
+  },
+  {
+    primary: "#8265AA",
+    secondary: "#B399D959",
+  },
+  {
+    primary: "#65AA6F",
+    secondary: "#98D9A659",
+  },
 ];
 
 class InventoryService {
