@@ -16,14 +16,15 @@
       </div>
     </div>
 
-    <inventory-details
-      v-if="activeInventoryItem"
-      :inventory-item="activeInventoryItem"
-      class="inventory__item-details"
-      :style="{ right: isShowInventoryItemDetails ? '0px' : '-100%' }"
-      @close-details="closeInventorItemDetails"
-      @delete-some-count="deleteSomeCount"
-    />
+    <transition name="inventory-item-details">
+      <inventory-details
+        v-if="activeInventoryItem"
+        :inventory-item="activeInventoryItem"
+        class="inventory__item-details"
+        @close-details="closeInventorItemDetails"
+        @delete-some-count="deleteSomeCount"
+      />
+    </transition>
 
     <div
       v-if="isShowInventoryItemDetails"
@@ -67,12 +68,15 @@ const onClickGridElement = (pos: number) => {
 };
 
 const isShowInventoryItemDetails = ref(false);
-const activeInventoryItem = ref<IInventoryItem>();
+const activeInventoryItem = ref<IInventoryItem | undefined>();
 const showInventorItemDetails = (inventoryItem: IInventoryItem) => {
-  activeInventoryItem.value = inventoryItem as IInventoryItem;
+  activeInventoryItem.value = inventoryItem;
   isShowInventoryItemDetails.value = true;
 };
-const closeInventorItemDetails = () => (isShowInventoryItemDetails.value = false);
+const closeInventorItemDetails = () => {
+  activeInventoryItem.value = undefined;
+  isShowInventoryItemDetails.value = false;
+};
 
 const deleteSomeCount = (deletedCount: number) => {
   const pos = activeInventoryItem.value?.pos as number;
@@ -84,6 +88,8 @@ const deleteSomeCount = (deletedCount: number) => {
     const remainingCount = count - deletedCount;
     updateInventoryItem(pos, { count: remainingCount });
   }
+
+  closeInventorItemDetails();
 };
 
 const onDragStart = (event: DragEvent, pos: number) => {
@@ -108,6 +114,24 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+.inventory-item-details {
+}
+
+.inventory-item-details-enter-active,
+.inventory-item-details-leave-active {
+  transition: right 0.5s ease;
+}
+
+.inventory-item-details-enter-from,
+.inventory-item-details-leave-to {
+  right: -100%;
+}
+
+.inventory-item-details-enter-to,
+.inventory-item-details-leave-from {
+  right: 0;
+}
+
 .inventory {
   overflow: hidden;
   position: relative;
@@ -143,18 +167,17 @@ onMounted(async () => {
     top: 0;
     bottom: 0;
     z-index: 1;
+    right: 0;
 
     background-color: #26262680;
     backdrop-filter: blur(12px);
-
-    transition: all 0.5s ease-out;
   }
 
   &__bg {
     position: absolute;
     top: 0;
     left: 0;
-    // background-color: black;
+
     width: 100%;
     height: 100%;
   }
