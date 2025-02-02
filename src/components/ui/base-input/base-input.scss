@@ -1,0 +1,27 @@
+.base-input {
+  &--danger &__field {
+    border-color: $danger;
+  }
+
+  &__field {
+    padding: 12px;
+    background-color: #262626;
+    border-radius: 4px;
+    border: 1px solid #4d4d4d;
+
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    color: #ffffff;
+
+    &[type="number"]::-webkit-inner-spin-button,
+    &[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type="number"] {
+      -moz-appearance: textfield;
+    }
+  }
+}
